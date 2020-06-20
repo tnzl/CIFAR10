@@ -40,6 +40,26 @@ https://arxiv.org/pdf/1406.3332.pdf
 
 
 # REFERENCES
+
+## Setup experiment environment
+1. Latest versions of following libraries are used:
+````
+numpy
+sklearn
+tensorflow
+matplotlib
+````
+
+2. Download the dataset to your CIFAR10 directory and add it to `.gitignore`.
+    `````
+    cd CIFAR10
+    wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+    tar -xf cifar-10-python.tar.gz
+    rm cifar-10-python.tar.gz
+    echo 'cifar-10-batches-py' > .gitignore
+    `````
+
+## REFERENCES
 * Dataset: https://www.cs.toronto.edu/~kriz/cifar.html
 * Blog: https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html on visualizing convolution layers.
 * Guide: http://karpathy.github.io/2019/04/25/recipe/ A Recipe for Training Neural Networks
