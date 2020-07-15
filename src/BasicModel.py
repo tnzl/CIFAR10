@@ -1,4 +1,5 @@
 import tensorflow as tf 
+from CustomCallbacks import LongTermTrainer
 
 class FeatureBlock(tf.keras.Model):
 
@@ -63,6 +64,7 @@ class CompileModel(tf.keras.Model):
         
         self.feature_block = FeatureBlock()
         self.dense_block = DenseBlock()
+        self.model_name = 'Basic'
 
     def call(self, inputs):
         
@@ -76,7 +78,7 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=3e-3)
 loss = tf.keras.losses.CategoricalCrossentropy()
 
 # Add Callbacks below specially schedulers.
-specific_callbacks = []
+specific_callbacks = [LongTermTrainer()]
 
 # Add preprocesses here, which will be done along with other preprocesses 
 specific_preprocesses = ([], [])

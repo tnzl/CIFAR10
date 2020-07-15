@@ -1,25 +1,45 @@
 import tensorflow as tf
 import numpy as np
+from utils import latest_checkpoint, checkpoint_name
+import CONSTANTS as c
 
+# Use this as super class for specific callbacks to model
 class LongTermTrainer(tf.keras.callbacks.Callback):
 
-    def __init__(self, number of epochs to train this time, ):
-        super(SaveLosseAndMetrics, self).__init__()
-    def on_train_begin(self, something):
-        create folder if not present
-        load model 
-        load epochnumber and set learning rate and other related params
+    def __init__(self):
+        super(LongTermTrainer, self).__init__()
+        epoch = None 
+    
+    def lr_schedule(self, epoch):
+        #Schedule lr here in /child class
+        return self.model.optimizer.lr
 
-    def on_epoch_begin(self, epoch):
-    set learning rate 
+    def on_train_begin(self, logs=None):
+        # create folder if not present
+        e, lc = latest_checkpoint(self.model.model_name)
+        print("######",c.ROOT)
+        self.epoch = e
+        if lc != 'NO CKPT':
+            print('Loading model...\nStarting from epoch ',self.epoch)
 
-    def on_epoch_end(smthng)
-    save model
-    check conditions on epoch to stop training 
+            self.model.load_weights(lc) 
+        else:
+            print('Starting to train new model')
+        # load epochnumber and set learning rate and other related params
 
+    def on_epoch_begin(self, epoch, logs=None):
+        # set learning rate 
+        self.model.optimizer.lr = self.lr_schedule(self.epoch)
+        
+        # increment total epoch
+        self.epoch += 1
 
-
-
+    def on_epoch_end(self, epoch, logs=None):
+        # check conditions on epoch to stop training 
+        print('\nSaving weights...', end='')
+        self.model.save_weights(checkpoint_name(self.model.model_name, 1, epoch)) 
+        print('Done')   
+        
 class SaveLosseAndMetrics(tf.keras.callbacks.Callback):
     
     def __init__(self, batch_interval=5, load_record=None, save_record=None):

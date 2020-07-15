@@ -1,4 +1,7 @@
 import matplotlib.pyplot as plt
+import CONSTANTS as c
+from os import listdir
+import re 
 
 def moving_average(a, n=3) :
     ret = np.cumsum(a, dtype=float)
@@ -17,3 +20,12 @@ def plot_history(hist):
     bx.plot(hist.history['val_accuracy'],label='val_accuracy')
     bx.set_title('accuracy')
     bx.legend()
+
+def latest_checkpoint(model_name):
+    # l = listdir(c.ROOT + 'checkpoints')
+    # r = re.compile(model_name + "\d*")
+    # newlist = list(filter(r.match, l))
+    return 0, 'NO CKPT'
+
+def checkpoint_name(model,attempt,epoch):
+    return model+'a='+str(attempt)+'e='+str(epoch)
