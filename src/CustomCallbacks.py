@@ -1,62 +1,72 @@
 import tensorflow as tf
 import numpy as np
-from utils import latest_checkpoint, checkpoint_name
+from utils import *
 import CONSTANTS as c
-
+from os import remove
 # Use this as super class for specific callbacks to model
 class LongTermTrainer(tf.keras.callbacks.Callback):
 
     def __init__(self):
         super(LongTermTrainer, self).__init__()
-        epoch = None 
+        self.epoch = None 
+        self.attempt = 1
+    
+    # Add Schedules of different parameters here.
     
     def lr_schedule(self, epoch):
         #Schedule lr here in /child class
         return self.model.optimizer.lr
 
-    def on_train_begin(self, logs=None):
-        # create folder if not present
-        e, lc = latest_checkpoint(self.model.model_name)
-        print("######",c.ROOT)
+    def load_weights(self, attempt):
+        e, lc = latest_checkpoint(self.model.model_name, self.attempt)
         self.epoch = e
-        if lc != 'NO CKPT':
-            print('Loading model...\nStarting from epoch ',self.epoch)
-
-            self.model.load_weights(lc) 
+        if lc != -1:
+            print('Loading model...', end='')
+            self.model.load_weights(c.ROOT + 'checkpoints/'+lc) 
+            print('Done\nStarting from epoch = ',self.epoch)
         else:
             print('Starting to train new model')
+    
+    # Add pre-defined functions here
+    
+    def on_train_begin(self, logs=None):
+        # create folder if not present
+        self.load_weights(self.attempt)
         # load epochnumber and set learning rate and other related params
+        pass 
 
     def on_epoch_begin(self, epoch, logs=None):
         # set learning rate 
         self.model.optimizer.lr = self.lr_schedule(self.epoch)
         
         # increment total epoch
-        self.epoch += 1
+        self.epoch += 1 
 
     def on_epoch_end(self, epoch, logs=None):
         # check conditions on epoch to stop training 
         print('\nSaving weights...', end='')
-        self.model.save_weights(checkpoint_name(self.model.model_name, 1, epoch)) 
+        self.model.save_weights(c.ROOT
+                            + 'checkpoints/'
+                            + checkpoint_name(self.model.model_name, self.attempt, self.epoch)) 
         print('Done')   
         
 class SaveLosseAndMetrics(tf.keras.callbacks.Callback):
-    
-    def __init__(self, batch_interval=5, load_record=None, save_record=None):
+
+    def __init__(self, attempt=1, batch_interval=5):
         super(SaveLosseAndMetrics, self).__init__()
         self.batch_interval = batch_interval
-        self.record = {}
         self.keys = ['loss']
-        self.save_record = save_record
-        self.load_record = load_record
-        
-        if load_record :
-            import pickle
-            with open(self.load_record, 'rb') as f:
-                 self.record = pickle.load(f)
-            
-    
+        self.attempt = attempt
+        self.record = None
+
     def on_train_begin(self, logs=None):
+        
+        lat_rec = latest_record(self.model.model_name, self.attempt)
+        if lat_rec == -1:
+            self.record = {}
+        else :
+            self. record = load_obj(c.ROOT + 'logs/' + lat_rec)
+        
         self.keys += self.model.metrics_names
         
         for key in self.keys:
@@ -70,11 +80,10 @@ class SaveLosseAndMetrics(tf.keras.callbacks.Callback):
                 self.record[key].append(logs[key])
                 
     def on_epoch_end(self, epoch, logs=None):
-        if self.save_record:
-            import pickle
-            with open(self.save_record, 'wb') as f:
-                    pickle.dump(self.save_record, f, pickle.HIGHEST_PROTOCOL)
-                
+
+        # save record here.
+        save_obj(self.record, record_name(self.model.model_name, self.attempt))
+              
 class LRScheduler(tf.keras.callbacks.Callback):
     
     def __init__(self, fn):

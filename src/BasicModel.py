@@ -1,5 +1,5 @@
 import tensorflow as tf 
-from CustomCallbacks import LongTermTrainer
+from CustomCallbacks import LongTermTrainer, SaveLosseAndMetrics
 
 class FeatureBlock(tf.keras.Model):
 
@@ -78,7 +78,7 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=3e-3)
 loss = tf.keras.losses.CategoricalCrossentropy()
 
 # Add Callbacks below specially schedulers.
-specific_callbacks = [LongTermTrainer()]
+specific_callbacks = [LongTermTrainer(), SaveLosseAndMetrics(attempt=1)]
 
 # Add preprocesses here, which will be done along with other preprocesses 
 specific_preprocesses = ([], [])

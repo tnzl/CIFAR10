@@ -5,9 +5,11 @@ import argparse
 from utils import plot_history
 
 parser = argparse.ArgumentParser()
-parser.add_argument("m", help="Select model here")
+parser.add_argument("model", help="Select model here")
+parser.add_argument('-epochs', default=2, help='Set epochs')
 args = parser.parse_args()
-m = args.m
+m = args.model
+e = int(args.epochs)
 
 model = c.MODEL_MODULES[m].CompileModel()
 optimizer = c.MODEL_MODULES[m].optimizer
@@ -21,6 +23,6 @@ model.build((None, c.IMG_SIZE, c.IMG_SIZE, c.CHANNELS))
 print(model.summary())
 x_tr, y_tr, x_te, y_te = get_matrices(preprocesses)
 
-hist = model.fit(x_tr, y_tr, epochs= 2
+hist = model.fit(x_tr, y_tr, epochs= e
                  , validation_data= (x_te, y_te)
                  , callbacks = callbacks)  
