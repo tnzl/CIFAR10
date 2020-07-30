@@ -19,6 +19,9 @@ https://arxiv.org/pdf/1406.3332.pdf
     https://www.isip.uni-luebeck.de/fileadmin/uploads/tx_wapublications/hertel_ijcnn_2015.pdfa
     Pre-train on MNIST maybe or some else dataset.
     3.
+   
+# Weight  initialisation and activation function
+    Kaiming init weights and relu activate
   
 
 # Overfitting
