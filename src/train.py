@@ -6,18 +6,23 @@ from utils import plot_history
 
 parser = argparse.ArgumentParser()
 parser.add_argument("model", help="Select model here")
+parser.add_argument('-attempts', type=int, default=0, help='Set attempt')
 parser.add_argument('-epochs', default=2, help='Set epochs')
 args = parser.parse_args()
 m = args.model
+a = args.attempts
 e = int(args.epochs)
 
-model = c.MODEL_MODULES[m].CompileModel()
-optimizer = c.MODEL_MODULES[m].optimizer
-loss = c.MODEL_MODULES[m].loss
-callbacks = [] + c.MODEL_MODULES[m].specific_callbacks
+print(m,a,e)
+
+module = c.MODEL_MODULES[m]
+model = module.CompileModel()
+optimizer = module.optimizer
+loss = module.loss
+callbacks = [module.attempts[a]] + module.specific_callbacks
 preprocesses = ([] + c.MODEL_MODULES[m].specific_preprocesses[0], [] + c.MODEL_MODULES[m].specific_preprocesses[1])
 
-model.compile(optimizer,loss,metrics=['accuracy'])
+model.compile(optimizer, loss, metrics=['accuracy'])
 model.build((None, c.IMG_SIZE, c.IMG_SIZE, c.CHANNELS))
 
 print(model.summary())

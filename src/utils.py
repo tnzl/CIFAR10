@@ -3,9 +3,10 @@ import CONSTANTS as c
 from os import listdir
 import re 
 import pickle
+from numpy import cumsum
 
 def moving_average(a, n=3) :
-    ret = np.cumsum(a, dtype=float)
+    ret = cumsum(a, dtype=float)
     ret[n:] = ret[n:] - ret[:-n]
     return ret[n - 1:] / n
 
@@ -23,7 +24,7 @@ def plot_history(hist):
     bx.legend()
 
 def latest_checkpoint(model_name, attempt):
-    l = listdir(c.ROOT + 'checkpoints/')
+    l = listdir(c.ROOT[:] + 'checkpoints/')
     present = False
     e = []
     for f in l:
@@ -44,9 +45,11 @@ def latest_checkpoint(model_name, attempt):
 
 def latest_record(model_name, attempt):
     rn = record_name(model_name, attempt)
-    if rn in listdir(path = c.ROOT + 'logs/'):
+    ls = listdir(path = c.ROOT[:] + 'logs/')
+    #print('Seaaaa: ', ls)
+    if rn+'.pkl' in ls:
         return rn
-    else :
+    else :    
         return -1 
 
 def checkpoint_name(model_name, attempt,epoch):
@@ -62,5 +65,8 @@ def save_obj(obj, name ):
     print('Done')
 
 def load_obj(name ):
-    with open(c.ROOT + 'logs/' + name + '.pkl', 'rb') as f:
+    with open(c.ROOT[:] + 'logs/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
+
+def time_decay(time, decay=0.4):
+    return (1 + decay * time)**-1

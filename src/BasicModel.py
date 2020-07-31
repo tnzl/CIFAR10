@@ -1,5 +1,6 @@
 import tensorflow as tf 
 from CustomCallbacks import LongTermTrainer, SaveLosseAndMetrics
+from utils import *
 
 class FeatureBlock(tf.keras.Model):
 
@@ -58,7 +59,6 @@ class DenseBlock(tf.keras.Model):
 
 class CompileModel(tf.keras.Model):
 
-
     def __init__(self):
         super(CompileModel, self).__init__()
         
@@ -77,8 +77,21 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=3e-3)
 
 loss = tf.keras.losses.CategoricalCrossentropy()
 
+class Attempt1(LongTermTrainer):
+    
+    def __init__(self):
+        super(Attempt1, self).__init__()
+
+        self.attempt = 1
+        #self.model.optimizer.lr = 1e-2
+
+    def lr_schedule(self, epoch, lr):
+        return lr * time_decay(epoch)
+
+attempts = {0: LongTermTrainer(), 1 : Attempt1(), }
+
 # Add Callbacks below specially schedulers.
-specific_callbacks = [LongTermTrainer(), SaveLosseAndMetrics(attempt=1)]
+specific_callbacks = [SaveLosseAndMetrics(attempt=1)]
 
 # Add preprocesses here, which will be done along with other preprocesses 
 specific_preprocesses = ([], [])

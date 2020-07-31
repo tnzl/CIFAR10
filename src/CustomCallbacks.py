@@ -13,7 +13,7 @@ class LongTermTrainer(tf.keras.callbacks.Callback):
     
     # Add Schedules of different parameters here.
     
-    def lr_schedule(self, epoch):
+    def lr_schedule(self, epoch, lr):
         #Schedule lr here in /child class
         return self.model.optimizer.lr
 
@@ -33,11 +33,11 @@ class LongTermTrainer(tf.keras.callbacks.Callback):
         # create folder if not present
         self.load_weights(self.attempt)
         # load epochnumber and set learning rate and other related params
-        pass 
+        
 
     def on_epoch_begin(self, epoch, logs=None):
         # set learning rate 
-        self.model.optimizer.lr = self.lr_schedule(self.epoch)
+        self.model.optimizer.lr = self.lr_schedule(self.epoch, self.model.optimizer.lr)
         
         # increment total epoch
         self.epoch += 1 
@@ -64,23 +64,42 @@ class SaveLosseAndMetrics(tf.keras.callbacks.Callback):
         lat_rec = latest_record(self.model.model_name, self.attempt)
         if lat_rec == -1:
             self.record = {}
+            print('Creating New records.')
         else :
-            self. record = load_obj(c.ROOT + 'logs/' + lat_rec)
+            self. record = load_obj(lat_rec)
+            print('Old records found.')
+            
         
         self.keys += self.model.metrics_names
         
+        print('Model metrics :', self.model.metrics_names)
+
         for key in self.keys:
             if key not in self.record.keys():
                 self.record[key] = []
             
     def on_train_batch_end(self, batch, logs=None):
 
+        for key in logs.keys():
+            if key not in self.record.keys():
+                self.keys.append(key)
+                self.record[key] = []
+
         if batch % self.batch_interval:
-            for key in self.keys:
+            for key in logs.keys():
                 self.record[key].append(logs[key])
                 
     def on_epoch_end(self, epoch, logs=None):
 
+        for key in logs.keys():
+            if key not in self.record.keys():
+                self.keys.append(key)
+                self.record[key] = []
+
+        for key in logs.keys():
+            self.record[key].append(logs[key])
+
+        #print('on_epoch_end log keys:', logs.keys())
         # save record here.
         save_obj(self.record, record_name(self.model.model_name, self.attempt))
               

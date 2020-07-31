@@ -1,2 +1,2 @@
-model_checkpoint_path: "Basic:a=1e=6"
-all_model_checkpoint_paths: "Basic:a=1e=6"
+model_checkpoint_path: "Basic:a=1e=10"
+all_model_checkpoint_paths: "Basic:a=1e=10"
