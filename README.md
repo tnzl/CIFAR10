@@ -1,5 +1,10 @@
 # CIFAR10
-Analysis of models and implementation different algorithms with aim to improve state of art results on CIFAR-10 dataset
+Analysis of models and implementation different algorithms with aim to improve state of art results on CIFAR-10 dataset. This is a playground for experimenting and implementing new things I learn.
+Although it is named CIFAR10 but all the experiments and models are run on CIFAR100 because next step will be transfer model to CIFAR10.
+This is my playtime repo and ecery tab below gives the idea about decision in that sphere of model.
+
+# Result 
+
 
 # Models
 ** Remove this line: Relatively light weight model to be chosen in order to apply **
