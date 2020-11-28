@@ -4,9 +4,12 @@ Although it is named CIFAR10 but all the experiments and models are run on CIFAR
 This is my playtime repo and ecery tab below gives the idea about decision in that sphere of model.
 
 # Result 
-<img src="loss_cifar100.png" height=300><img src="acc_cifar100.png" height=300>
+Weights and Bias run: [here](https://wandb.ai/tnzl/dense-net-implementation?workspace=user-tnzl)\
+<img src="loss_cifar100.png" height=300>\
+<img src="acc_cifar100.png" height=300>
 
 # Models
+Model graph: [here](https://wandb.ai/tnzl/dense-net-implementation/runs/d100k12BC/model?workspace=user-tnzl)\
 ** Remove this line: Relatively light weight model to be chosen in order to apply **
 
 Simple CNN: Enhanced Image Classification With a Fast-LearningShallow Convolutional Neural Network
